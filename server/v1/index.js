@@ -1,8 +1,8 @@
 import express from 'express'
-import counter from './counter'
+import user from './user'
 
 const router = express.Router()
 
-router.use('/counter', counter)
+router.use('/user', user)
 
 export default router

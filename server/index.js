@@ -10,5 +10,4 @@ router.use((req, res, next) => {
 })
 
 router.use('/v1', v1)
-
 export default router
