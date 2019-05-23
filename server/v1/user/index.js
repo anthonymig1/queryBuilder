@@ -2,6 +2,8 @@ import express from 'express'
 
 const router = express.Router()
 
+import { Users } from '../../models/user'
+
 const users = {
   A: {
     _id     : '1',
@@ -40,13 +42,13 @@ const arrUsers = [
   }
 ]
 
-router.get('/detailfromdb:/id', (req, res)=>{
+router.get('/detailfromdb/:id', async (req, res) => {
   const { params: { id } } = req
   try {
-    const { name, email } = Users.findById(id).lean().select('name, email')
-    res.json({ success: true, results: { name, email } })
+    const { email, name, think } = await Users.findById(id).lean().select('email name think')
+    res.json({ success: true, user: { email, name, think } })
   } catch (error) {
-    res.json({ success: false, results: {} })
+    res.json({ success: false, error: error.message })
   }
 })
 
