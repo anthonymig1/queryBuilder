@@ -4,72 +4,63 @@ const router = express.Router()
 
 import { Users } from '../../models/user'
 
-const users = {
-  A: {
-    _id     : '1',
-    name    : 'Donald',
-    lastName: 'Trump',
-    mobile  : '+51999999999',
-    email   : 'donal@trump.com',
-    password: '123456'
-  },
-  B: {
-    _id     : '2',
-    name    : 'Vladimir',
-    lastName: 'Putin',
-    mobile  : '+51999999999',
-    email   : 'vladimird@putin.com',
-    password: '654321'
-  }
-}
-
-const arrUsers = [
-  {
-    _id     : '1',
-    name    : 'Donald',
-    lastName: 'Trump',
-    mobile  : '+51999999999',
-    email   : 'donal@trump.com',
-    password: '123456'
-  },
-  {
-    _id     : '2',
-    name    : 'Vladimir',
-    lastName: 'Putin',
-    mobile  : '+51999999999',
-    email   : 'vladimird@putin.com',
-    password: '654321'
-  }
-]
 
 router.get('/detailfromdb/:id', async (req, res) => {
   const { params: { id } } = req
   try {
-    const { email, name, think } = await Users.findById(id).lean().select('email name think')
-    res.json({ success: true, user: { email, name, think } })
+    const { email, name, thinks } = await Users.findOne({name : id}).lean().select('email name thinks')
+    res.json({ success: true, user: { email, name, thinks } })
   } catch (error) {
     res.json({ success: false, error: error.message })
   }
 })
 
-router.get('/detailobj/:id', (req, res) => {
-  const { params: { id } } = req
-  const { A, B } = users
-  let results
-  if(A._id == id)
-    results = A
-  results = B
-  res.json(results)
-})
-
-router.get('/detailarr/:id', (req, res) => {
-  const { params: { id } } = req
-  try {
-    const [ results ] = arrUsers.filter(el=> el._id === id)
-    res.json({  results })
-  } catch (error) {
-    res.json({ success: false, error: error.message })
+router.post('/insertfromdb/', async (req,res)=>{
+  const { body } = req;
+  console.log(body)
+ try{
+      await Users.create(body)
+      res.json({success:true, user:{ body }});
+  }catch(error){
+      res.json({success: false , error:error.message})
   }
 })
 
+router.post('/savefromdb/' ,async (req, res)=>{
+  const {name , lastName ,mobile , gender , email ,thinks } =  req.body;
+  const user = new Users({
+    name,
+    lastName,
+    mobile,
+    gender,
+    email,
+    thinks
+  })
+    try{
+      let newUser = await user.save();
+      res.json({success:true, newUser });
+    }catch(error){
+      res.json({success : false , error:error.message})
+    }
+})
+router.put('/updateUser/:id', async (req,res)=>{
+  const {params : {id}} = req
+  const {body} =  req
+  try{
+    let newUser = await Users.findOneAndUpdate({_id:id} , body,{new: true})
+    res.json({success:true , newUser})
+  }catch(error){
+    res.json({success : false , error:error.message})      
+  }
+})
+
+router.delete('/deleteUser/:id',async (req,res)=>{
+  const {params : {id}} = req
+  try{
+    let deletedUser =  await Users.findOneAndRemove({_id:id})
+    res.json({ success:true , deletedUser })
+  }catch(error){  
+    res.json({ success:false , error:error.message})
+  }
+})
 export default router

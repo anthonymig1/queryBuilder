@@ -15,15 +15,16 @@ mongoose.connect(MONGO_DB,
 
 const userSchema = new Schema({
   name    : { type: String },
-  email   : { type: String, 'default': null },
-  gender  : { type: String, 'default': null },
   lastName: { type: String, 'default': null },
   mobile  : { type: String, 'default': null },
-  think   : { type: String, 'default': null },
+  gender  : { type: String, 'default': null },
+  email   : { type: String, 'default': null },
+  thinks   : { type: String, 'default': null },
   createAt: { type: Date, 'default': new Date() },
   updateAt: { type: Date, 'default': new Date() }
 })
 
 const Users = mongoose.model('Users', userSchema)
+
 
 export { Users }
